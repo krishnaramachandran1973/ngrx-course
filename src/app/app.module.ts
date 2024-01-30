@@ -15,6 +15,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { AuthModule } from './auth/auth.module';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { EffectsModule } from '@ngrx/effects';
+import { RouterState, StoreRouterConnectingModule } from '@ngrx/router-store';
+import { reducers, metaReducers } from './reducers';
 
 @NgModule({
   declarations: [AppComponent],
@@ -30,8 +33,21 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     MatProgressSpinnerModule,
     MatListModule,
     MatToolbarModule,
-    StoreModule.forRoot(),
+    StoreModule.forRoot(reducers, {
+      metaReducers,
+      runtimeChecks: {
+        strictStateImmutability: true,
+        strictActionImmutability: true,
+        strictActionSerializability: true,
+        strictStateSerializability: true,
+      },
+    }),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
+    EffectsModule.forRoot([]),
+    StoreRouterConnectingModule.forRoot({
+      stateKey: 'router',
+      routerState: RouterState.Minimal,
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent],
